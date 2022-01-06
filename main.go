@@ -1,13 +1,13 @@
 package main
 
+//go:generate go run github.com/go-bindata/go-bindata/go-bindata -pkg $GOPACKAGE -o assets.go assets/
+
 import (
 	"os"
 	"flag"
 	"path/filepath"
-	"log"
 
-//	"github.com/lxn/walk"
-//	decl "github.com/lxn/walk/declarative"
+	"github.com/getlantern/systray"
 )
 
 func defaultPath() string {
@@ -30,11 +30,31 @@ func main() {
 
 	flag.Parse()
 
+	state := State{Filename: *fn}
+
+	systray.Run(state.onSystrayReady, nil)
+
+}
+
+type State struct {
+	Filename string
+	Context string
+}
+
+func (self State) onSystrayReady() {
 	context := make(chan string)
 
-	go watch(context, *fn)
+	go watch(context, self.Filename)
+
+	icon, err := Asset("assets/icon.ico")
+
+	if err == nil {
+		systray.SetIcon(icon)
+	}
 
 	for {
-		log.Println("Context changed:", <-context)
+		self.Context = <-context
+		systray.SetTitle(self.Context)
+		systray.SetTooltip(self.Context)
 	}
 }
