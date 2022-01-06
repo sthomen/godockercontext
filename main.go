@@ -30,20 +30,23 @@ func main() {
 
 	flag.Parse()
 
-	state := State{Filename: *fn}
+	state := NewState(*fn)
 
 	systray.Run(state.onSystrayReady, nil)
 }
 
-type State struct {
+type state struct {
 	Filename string
-	Context string
+	context *Context
 }
 
-func (self State) onSystrayReady() {
-	context := make(chan string)
+func NewState(fn string) *state {
+	state := new(state)
+	state.Filename = fn
+	return state
+}
 
-	go watch(context, self.Filename)
+func (self *state) onSystrayReady() {
 
 	icon, err := Asset("assets/icon.ico")
 
@@ -52,11 +55,13 @@ func (self State) onSystrayReady() {
 	}
 
 	go menu()
+	self.context = NewContext()
+	go self.context.watch(self.Filename)
 
 	for {
-		self.Context = <-context
-		systray.SetTitle(self.Context)
-		systray.SetTooltip(self.Context)
+		var context = <-self.context.Channel
+		systray.SetTitle(context)
+		systray.SetTooltip(context)
 	}
 }
 

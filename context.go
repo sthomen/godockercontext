@@ -7,7 +7,18 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-func readContext(fn string) (string, error) {
+type Context struct {
+	context string
+	Channel chan string
+}
+
+func NewContext() *Context {
+	context := new(Context)
+	context.Channel = make(chan string)
+	return context
+}
+
+func (self *Context) readContext(fn string) error {
 	var conf struct {
 		CurrentContext string
 	}
@@ -15,23 +26,25 @@ func readContext(fn string) (string, error) {
 	content, err := ioutil.ReadFile(fn)
 
 	if err != nil{
-		return "", err
+		return err
 	}
 
 	err = json.Unmarshal(content, &conf)
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	if conf.CurrentContext == "" {
-		return "default", nil
+	if conf.CurrentContext != "" {
+		self.context = conf.CurrentContext
+	} else {
+		self.context = "default"
 	}
 
-	return conf.CurrentContext, nil
+	return nil
 }
 
-func watch(output chan string, fn string) {
+func (self *Context) watch(fn string) {
 	log.Println(fn)
 
 	watcher, err := fsnotify.NewWatcher()
@@ -48,14 +61,14 @@ func watch(output chan string, fn string) {
 		return
 	}
 
-	context, err := readContext(fn)
+	err = self.readContext(fn)
 
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	output <- context
+	self.Channel <- self.context
 
 	defer watcher.Close()
 
@@ -68,14 +81,14 @@ func watch(output chan string, fn string) {
 				}
 
 				if event.Op & fsnotify.Write == fsnotify.Write {
-					context, err := readContext(fn)
+					err = self.readContext(fn)
 
 					if err != nil {
 						log.Fatal(err)
 						return
 					}
 
-					output <- context
+					self.Channel <- self.context
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
