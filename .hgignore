@@ -1,2 +1,4 @@
 syntax:glob
+assets.go
 godockercontext.exe
+godockercontext-gui.exe
