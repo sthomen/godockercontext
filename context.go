@@ -35,10 +35,11 @@ func (self *Context) readContext(fn string) error {
 		return err
 	}
 
-	if conf.CurrentContext != "" {
-		self.context = conf.CurrentContext
-	} else {
-		self.context = "default"
+	switch conf.CurrentContext {
+		case "":
+			self.context = "default"
+		default:
+			self.context = conf.CurrentContext
 	}
 
 	return nil
