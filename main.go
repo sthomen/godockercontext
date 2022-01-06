@@ -33,7 +33,6 @@ func main() {
 	state := State{Filename: *fn}
 
 	systray.Run(state.onSystrayReady, nil)
-
 }
 
 type State struct {
@@ -52,9 +51,23 @@ func (self State) onSystrayReady() {
 		systray.SetIcon(icon)
 	}
 
+	go menu()
+
 	for {
 		self.Context = <-context
 		systray.SetTitle(self.Context)
 		systray.SetTooltip(self.Context)
+	}
+}
+
+func menu() {
+	quit := systray.AddMenuItem("Quit", "Stop monitoring context")
+
+	for {
+		select {
+			case <-quit.ClickedCh:
+				systray.Quit()
+				return
+		}
 	}
 }
