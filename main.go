@@ -1,7 +1,5 @@
 package main
 
-//go:generate go run github.com/go-bindata/go-bindata/go-bindata -pkg $GOPACKAGE -o assets.go assets/
-
 import (
 	"os"
 	"flag"
@@ -47,25 +45,34 @@ func NewState(fn string) *state {
 }
 
 func (self *state) onSystrayReady() {
+	// an icon must exist before a menu item is added, so lets just use the default
+	systray.SetIcon(generateIconFromContextString("default"))
 
-	icon, err := Asset("assets/icon.ico")
+	// display the current context as a disabled entry in the menu,
+	// default to "default" here, it will be immediately overwritten by the
+	// loop below, but there has to be something.
+	current := systray.AddMenuItem("default", "Current context")
+	current.Disable()
 
-	if err == nil {
-		systray.SetIcon(icon)
-	}
+	// launch a goroutine to handle clicks
+	go menuClickHandler()
 
-	go menu()
+	// file watcher goroutine, feeds the current context into its channel
 	self.context = NewContext()
 	go self.context.watch(self.Filename)
 
+	// wait for a context from the channel and set it in the tray
 	for {
 		var context = <-self.context.Channel
+
+		systray.SetIcon(generateIconFromContextString(context))
+		current.SetTitle(context)
 		systray.SetTitle(context)
 		systray.SetTooltip(context)
 	}
 }
 
-func menu() {
+func menuClickHandler() {
 	quit := systray.AddMenuItem("Quit", "Stop monitoring context")
 
 	for {

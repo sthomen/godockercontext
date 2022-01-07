@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/getlantern/systray v1.1.0
+	git.shangtai.net/staffan/go-ico v1.0.0-beta.1
 )
 
 require (

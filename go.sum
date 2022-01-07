@@ -1,3 +1,5 @@
+git.shangtai.net/staffan/go-ico v1.0.0-beta.1 h1:2oyXGXyddleBAyro+RBaTkyyh4jX1WUxiZCSBj5m9BY=
+git.shangtai.net/staffan/go-ico v1.0.0-beta.1/go.mod h1:D7iHst2p5bFf3UssF9JknkrKIcPINiXYuwL/PjCDa8Q=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fsnotify/fsnotify v1.5.1 h1:mZcQUHVQUQWoPXXtuf9yuEXKudkV2sx1E06UadKWpgI=
