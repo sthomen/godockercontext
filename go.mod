@@ -3,9 +3,9 @@ module godockercontext
 go 1.17
 
 require (
+	git.shangtai.net/staffan/go-ico v1.0.0-beta.1
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/getlantern/systray v1.1.0
-	git.shangtai.net/staffan/go-ico v1.0.0-beta.1
 )
 
 require (
@@ -15,7 +15,6 @@ require (
 	github.com/getlantern/hex v0.0.0-20190417191902-c6586a6fe0b7 // indirect
 	github.com/getlantern/hidden v0.0.0-20190325191715-f02dbb02be55 // indirect
 	github.com/getlantern/ops v0.0.0-20190325191751-d70cb0d6f85f // indirect
-	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
