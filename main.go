@@ -5,7 +5,12 @@ import (
 	"flag"
 	"path/filepath"
 
+	"image"
+	"image/draw"
+	"image/color"
+
 	"github.com/getlantern/systray"
+	ico "git.shangtai.net/staffan/go-ico"
 )
 
 func defaultPath() string {
@@ -30,23 +35,29 @@ func main() {
 
 	state := NewState(*fn)
 
+	state.palette.Add("default", color.RGBA{0, 255, 0, 255})
+
 	systray.Run(state.onSystrayReady, nil)
 }
 
 type state struct {
 	Filename string
+	palette *Palette
 	context *Context
 }
 
 func NewState(fn string) *state {
 	state := new(state)
+
 	state.Filename = fn
+	state.palette = new(Palette)
+
 	return state
 }
 
 func (self *state) onSystrayReady() {
 	// an icon must exist before a menu item is added, so lets just use the default
-	systray.SetIcon(generateIconFromContextString("default"))
+	systray.SetIcon(self.generateIconFromContextString("default"))
 
 	// display the current context as a disabled entry in the menu,
 	// default to "default" here, it will be immediately overwritten by the
@@ -65,7 +76,7 @@ func (self *state) onSystrayReady() {
 	for {
 		var context = <-self.context.Channel
 
-		systray.SetIcon(generateIconFromContextString(context))
+		systray.SetIcon(self.generateIconFromContextString(context))
 		current.SetTitle(context)
 		systray.SetTitle(context)
 		systray.SetTooltip(context)
@@ -82,4 +93,23 @@ func menuClickHandler() {
 				return
 		}
 	}
+}
+
+func (self *state) generateIconFromContextString(context string) []byte {
+	var color = self.palette.GetColor(context)
+
+	icon := new(ico.Icon)
+
+	img := image.NewRGBA(image.Rect(0,0,64,64))
+	draw.Draw(img, img.Bounds(), &image.Uniform{color}, image.ZP, draw.Src)
+
+	icon.AddImage(img)
+
+	ico, err := icon.Encode()
+
+	if err != nil {
+		return nil
+	}
+
+	return ico
 }
