@@ -33,8 +33,17 @@ type Palette struct {
 	}
 }
 
-func (self *Palette) Add(name string, hue color.RGBA) {
-	self.colors = append(self.colors, struct {name string; color color.RGBA}{name: name, color: hue})
+func (self *Palette) Set(name string, hue color.RGBA) {
+	var entry = struct {name string; color color.RGBA}{name: name, color: hue}
+
+	for index, color := range self.colors {
+		if (color.name == name) {
+			self.colors[index] = entry
+			return
+		}
+	}
+
+	self.colors = append(self.colors, entry)
 }
 
 func (self *Palette) GetColor(name string) color.RGBA {

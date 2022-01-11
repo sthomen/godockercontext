@@ -34,6 +34,7 @@ func main() {
 	flag.Parse()
 
 	state := NewState(*fn)
+	state.palette.Set("default", color.RGBA{0, 255, 0, 255})
 
 	state.palette.Add("default", color.RGBA{0, 255, 0, 255})
 
