@@ -2,14 +2,14 @@ package main
 
 import (
 	"os"
-	"flag"
 	"path/filepath"
+	"flag"
+
+	"github.com/getlantern/systray"
 
 	"image"
 	"image/draw"
 	"image/color"
-
-	"github.com/getlantern/systray"
 	ico "git.shangtai.net/staffan/go-ico"
 )
 
@@ -30,13 +30,17 @@ func defaultPath() string {
 
 func main() {
 	var fn = flag.String("path", defaultPath(), "Path to the docker context config file")
+	var custom customColors
+	flag.Var(&custom, "color", "Custom color configuration, values should be in the form color=#rrggbb, can be repeated")
 
 	flag.Parse()
 
 	state := NewState(*fn)
 	state.palette.Set("default", color.RGBA{0, 255, 0, 255})
 
-	state.palette.Add("default", color.RGBA{0, 255, 0, 255})
+	for _, entry := range custom {
+		state.palette.Set(entry.name, entry.color)
+	}
 
 	systray.Run(state.onSystrayReady, nil)
 }
