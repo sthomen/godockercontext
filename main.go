@@ -103,12 +103,12 @@ func menuClickHandler() {
 func (self *state) generateIconFromContextString(context string) []byte {
 	var color = self.palette.GetColor(context)
 
-	icon := new(ico.Icon)
+	icon := ico.NewIcon()
 
 	img := image.NewRGBA(image.Rect(0,0,64,64))
 	draw.Draw(img, img.Bounds(), &image.Uniform{color}, image.ZP, draw.Src)
 
-	icon.AddImage(img)
+	icon.AddPng(img)
 
 	ico, err := icon.Encode()
 
