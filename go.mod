@@ -4,8 +4,8 @@ go 1.17
 
 require (
 	git.shangtai.net/staffan/go-ico v1.0.0-beta.2
-	github.com/fsnotify/fsnotify v1.5.1
-	github.com/getlantern/systray v1.1.0
+	github.com/fsnotify/fsnotify v1.6.0
+	github.com/getlantern/systray v1.2.1
 )
 
 require (
@@ -18,5 +18,5 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
-	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
+	golang.org/x/sys v0.0.0-20220908164124-27713097b956 // indirect
 )
