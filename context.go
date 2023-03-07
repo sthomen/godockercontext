@@ -77,27 +77,33 @@ func (self *Context) watch(fn string) {
 		select {
 			case event, ok := <-watcher.Events:
 				if !ok {
-					log.Fatal(ok)
-					return
+					log.Fatal("watcher.Events ok? ", ok)
 				}
 
-				if event.Op & fsnotify.Write == fsnotify.Write {
-					err = self.readContext(fn)
-
-					if err != nil {
-						log.Fatal(err)
-						return
-					}
-
-					self.Channel <- self.context
+				if event.Has(fsnotify.Remove) || event.Has(fsnotify.Rename) {
+					watcher.Remove(fn)
+					watcher.Add(fn)
 				}
+
+				// Immediately read the context even after a Remove or Rename
+				// event has happened because fsnotify is (presumably) too slow
+				// to react to the quick remove-create-write of the docker cli
+				// when the context is being changed.
+
+				err = self.readContext(fn)
+
+				if err != nil {
+					log.Println("self.readContext(fn) err = ", err)
+				}
+
+				self.Channel <- self.context
+
 			case err, ok := <-watcher.Errors:
 				if !ok {
-					log.Fatal(ok)
-					return
+					log.Fatal("watcher.Events ok? ", ok)
 				}
 
-				log.Fatal(err)
+				log.Fatal("watcher.Events err = ", err)
 		}
 	}
 }
